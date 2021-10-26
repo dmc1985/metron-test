@@ -1,0 +1,21 @@
+{
+  "name": "twitter-web-socket-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node ./index.js",
+    "dev": "nodemon ./index.js"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "rate-limiter-flexible": "^2.3.1",
+    "socket.io": "^4.3.1",
+    "twitter": "^1.7.1",
+    "twitter-lite": "^1.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  }
+}
