@@ -6,6 +6,7 @@ import FilteredTweetList from './FilteredTweetList';
 
 import socket from './socketClient';
 import filterTweets from './helpers';
+import ControlPanel from './ControlPanel';
 
 export default function Main() {
   const [firstFilter, setFirstFilter] = useState('');
@@ -19,7 +20,9 @@ export default function Main() {
     });
 
     const listener = (tweet) => {
-      setAllTweets((prevTweets) => [...prevTweets, tweet]);
+      setAllTweets((prevTweets) =>
+        some(prevTweets, { id: tweet.id }) ? prevTweets : [...prevTweets, tweet],
+      );
     };
 
     socket.on('tweet', listener);
@@ -31,40 +34,9 @@ export default function Main() {
 
   return (
     <Container>
-      <RowContainer>
-        <TextInput
-          id="first"
-          placeholder="First"
-          value={firstFilter}
-          onChange={(e) => setFirstFilter(e.target.value)}
-        />
-        <TextInput
-          id="second"
-          placeholder="Second"
-          value={secondFilter}
-          onChange={(e) => setSecondFilter(e.target.value)}
-        />
-      </RowContainer>
-      <RowContainer>
-        <Button
-          appearance="primary"
-          intent="success"
-          onClick={() => {
-            socket.emit('tweet-request', { filters: [firstFilter, secondFilter] });
-          }}
-        >
-          Go
-        </Button>
-        <Button
-          intent="danger"
-          onClick={() => {
-            socket.emit('stop');
-            setAllTweets([]);
-          }}
-        >
-          Reset
-        </Button>
-      </RowContainer>
+      <ControlPanel
+        {...{ firstFilter, secondFilter, setFirstFilter, setSecondFilter, setAllTweets }}
+      />
       <TweetListsContainer>
         <FilteredTweetList tweets={filterTweets(allTweets, firstFilter)} />
         <FilteredTweetList tweets={filterTweets(allTweets, secondFilter)} />

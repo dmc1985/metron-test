@@ -1,11 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
+
+const Container = styled.div`
+  border-bottom: 1px solid black;
+`;
 
 function Tweet({ tweet, orderNumber }) {
   return (
-    <span key={tweet.id}>
+    <Container key={tweet.id}>
       {orderNumber}. {tweet.text}
-    </span>
+    </Container>
   );
 }
 

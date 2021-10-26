@@ -7,9 +7,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 20px;
-  border: 1px solid black;
-  min-height: 40vw;
-  min-width: 20vw;
+  height: 40vw;
+  width: 45vw;
+  overflow-y: scroll;
 `;
 
 function FilteredTweetList({ tweets }) {
