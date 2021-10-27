@@ -29,44 +29,45 @@ function streamTweets(socket, filters) {
       points: 4,
       duration: 1,
     });
+  
+  const filterString = filters.reduce((acc, curr) => acc += `${curr},`, '')
 
-  return filters.map((filter) => {
-    const stream = client.stream('statuses/filter', {track: filter})
-      .on("start", response => console.log("start"))
-      .on('data', async (tweet) => {  
-        try {
-          await rateLimiter.consume(socket.handshake.address, 2)
-          socket.emit(`tweet`, {tweet, filter})
-          console.log(filter, tweet.text);
-        } catch (rejRes) {
-          // TODO: emit loading signal
-          console.log('retry in ', rejRes)
-          // console.log('retry in ', rejRes.msBeforeNext)
-        }
-      })
-      .on("ping", () => console.log("ping"))
-      .on("error", error => console.log("error", error))
-      .on("end", response => console.log("end"))
-    
+  const stream = client.stream('statuses/filter', {track: filterString})
+    .on("start", response => console.log("start"))
+    .on('data', async (tweet) => {
+      try {
+        await rateLimiter.consume(socket.handshake.address, 2)
+
+        filters.forEach(filter => {
+          if (tweet.text.toLowerCase().includes(filter.toLowerCase())) {
+            socket.emit(`tweet`, {tweet, filter})
+            console.log(filter, tweet.text);
+          }
+        })
+      } catch (rejRes) {
+        console.log('retry in ', rejRes.msBeforeNext)
+      }
+    })
+    .on("ping", () => console.log("ping"))
+    .on("error", error => console.log("error", error))
+    .on("end", response => console.log("end"))
+
     return stream
-  })
 }
 
 io.on('connection', async (socket) => {
   console.log('client connected')
 
-  let streams;
+  let stream;
 
   socket.on('tweet-request', ({ filters }) => {
-      streams = streamTweets(socket, filters)
+      stream = streamTweets(socket, filters)
   });
 
   socket.on('stop', () => {
     console.log('stop stream')
     try{
-      streams.forEach(stream => {
-        process.nextTick(() => stream.destroy())
-      })
+       process.nextTick(() => stream.destroy())
     }
     catch(err) {
       console.log('destroy err', err)
@@ -75,4 +76,4 @@ io.on('connection', async (socket) => {
 })
 
 
-server.listen(PORT, () => console.log(`Listening on port ${PORT}`, client))
+server.listen(PORT, () => console.log(`Listening on port ${PORT}`))
