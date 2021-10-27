@@ -43,6 +43,7 @@ function ControlPanel({
           onClick={() => {
             socket.emit('tweet-request', { filters: [firstFilter, secondFilter] });
           }}
+          disabled={!firstFilter || !secondFilter}
         >
           Go
         </StyledButton>

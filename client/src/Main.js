@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Button, TextInput } from 'evergreen-ui';
 import some from 'lodash/some';
-import { RowContainer, Container, TweetListsContainer } from './styledComponents';
+import { Container, TweetListsContainer } from './styledComponents';
 import FilteredTweetList from './FilteredTweetList';
 
 import socket from './socketClient';
-import filterTweets from './helpers';
+import { getGraphData, filterTweets } from './helpers';
 import ControlPanel from './ControlPanel';
+import TweetGraph from './TweetGraph';
 
 export default function Main() {
   const [firstFilter, setFirstFilter] = useState('');
@@ -32,15 +32,21 @@ export default function Main() {
     };
   }, []);
 
+  const filterOneTweets = filterTweets(allTweets, firstFilter);
+  const filterTwoTweets = filterTweets(allTweets, secondFilter);
+
+  const graphData = getGraphData(filterOneTweets, filterTwoTweets);
+
   return (
     <Container>
       <ControlPanel
         {...{ firstFilter, secondFilter, setFirstFilter, setSecondFilter, setAllTweets }}
       />
       <TweetListsContainer>
-        <FilteredTweetList tweets={filterTweets(allTweets, firstFilter)} />
-        <FilteredTweetList tweets={filterTweets(allTweets, secondFilter)} />
+        <FilteredTweetList tweets={filterOneTweets} />
+        <FilteredTweetList tweets={filterTwoTweets} />
       </TweetListsContainer>
+      <TweetGraph data={graphData} filterOne={firstFilter} filterTwo={secondFilter} />
     </Container>
   );
 }
