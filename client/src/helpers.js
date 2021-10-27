@@ -8,18 +8,18 @@ export function filterTweets(tweets, sectionFilter) {
 }
 
 export function getGraphData(filterOneTweets, filterTwoTweets) {
-  const isFilterOneLonger = filterOneTweets.length > filterTwoTweets;
+  const isFilterOneLonger = filterOneTweets.length > filterTwoTweets.length;
   const longestList = isFilterOneLonger ? filterOneTweets : filterTwoTweets;
   const shortestList = isFilterOneLonger ? filterTwoTweets : filterOneTweets;
 
   return longestList.map(({ tweet }, index) => {
     const tweetPopularity = tweet.retweeted_status ? tweet.retweeted_status.retweet_count : 0;
     const parallelTweetPopularity =
-      shortestList.length - 1 >= index && shortestList[index].tweet.retweeted_status
+      index <= shortestList.length - 1 && shortestList[index].tweet.retweeted_status
         ? shortestList[index].tweet.retweeted_status.retweet_count
         : 0;
     return {
-      name: longestList.length - index,
+      name: index + 1,
       filterOne: isFilterOneLonger ? tweetPopularity : parallelTweetPopularity,
       filterTwo: isFilterOneLonger ? parallelTweetPopularity : tweetPopularity,
     };
