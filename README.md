@@ -22,6 +22,8 @@ yarn install
 yarn start
 ```
 
+I added this Chrome extension to allow Cors https://chrome.google.com/webstore/detail/allow-cors-access-control/lhobafahddgcelffkeicbaginigeejlf?hl=en. Please install this and activate in the Chrome browser in which you run the client.
+
 Note: occassionally a 420 error (`Exceeded connection limit for user`) causes the server to crash. Please relaunch the server and refresh the client if this happens.
 
 
